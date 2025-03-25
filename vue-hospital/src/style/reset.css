@@ -1,0 +1,84 @@
+/* 全局样式重置 - 适用于Vue3项目 */
+:where(
+  html, body, div, span, app-root,
+  h1, h2, h3, h4, h5, h6, p, blockquote,
+  a, img, ol, ul, li, form, label, footer, header,
+  menu, nav, section, input, textarea, button
+) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+/* 设置统一盒模型 */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* 基础文档样式 */
+:where(html) {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+
+:where(body) {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+}
+
+/* 列表样式重置 */
+:where(ol, ul) {
+  list-style: none;
+}
+
+/* 链接样式 */
+:where(a) {
+  background-color: transparent;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 表单元素重置 */
+:where(button, input, select, textarea) {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  background: none;
+  border: none;
+  outline: none;
+  appearance: none;
+}
+
+/* 按钮特别处理 */
+:where(button) {
+  cursor: pointer;
+}
+
+/* 媒体元素 */
+:where(img, video, canvas) {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 表格重置 */
+:where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 移除默认聚焦样式 */
+:where(:focus) {
+  outline: 0;
+}
+
+/* Vue Router链接重置 */
+a.router-link-active,
+a.router-link-exact-active {
+  @apply text-inherit; /* 或使用具体颜色值 */
+}
