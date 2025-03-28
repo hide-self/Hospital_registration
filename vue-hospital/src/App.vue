@@ -21,17 +21,6 @@
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
-// axios二次封装测试
-// import request from '@/utils/request'
-// import { onMounted } from 'vue'
-
-// onMounted(()=>{
-//     request.get('/hosp/hospital/1/10').then((res)=>{
-//         console.log('App组件获取的数据：',res);
-        
-//     })
-// })
-
 </script>
 
 <style scoped lang="scss">

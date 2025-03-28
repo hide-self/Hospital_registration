@@ -12,15 +12,16 @@
             <!-- elementPlus每一行有24格，通过:span来设置所占份额 -->
             <el-col :span="20">
                 <!-- 等级子组件 -->
-                <Level />
+                <Level @getLevel="getLevel"/>
 
                 <!-- 地区子组件 -->
-                <Region />
+                <Region @getRegion="getRegion"/>
 
                 <!-- 展示医院结构 -->
-                <div class="hospital">
+                <div class="hospital" v-if="hasHospitalArr.length>0">
                     <Card class="item" v-for="(item, index) in hasHospitalArr" :key="index" :hospitalInfo="item" />
                 </div>
+                <el-empty v-else description="没有医院信息" />
                 <!-- 分页器 -->
                 <el-pagination v-model:current-page="pageNo" v-model:page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
                     :size="size" layout="prev, pager, next, jumper,->, sizes,total" :total="total"
@@ -60,6 +61,11 @@ const size = ref<ComponentSize>('default')
 let hasHospitalArr = ref<Content>([])
 let total = ref<number>(0)
 
+// 存储筛选关键字：医院等级与地区
+let hostype=ref<string>('')
+let districtCode=ref<string>('')
+
+
 // 组件挂在完毕，发一次请求
 onMounted(() => {
     getHospitalInfo()
@@ -68,7 +74,7 @@ onMounted(() => {
 // 获取已有的医院的数据
 const getHospitalInfo = async () => {
     // 获取医院数据：默认获取第一页，一页十个
-    let result: HospitalResponseData = await reqHospital(pageNo.value, pageSize.value)
+    let result: HospitalResponseData = await reqHospital(pageNo.value, pageSize.value,hostype.value,districtCode.value)
     // console.log(result);
     // console.log(result.data.content);
 
@@ -94,6 +100,22 @@ const currentChange = () => {
 
 // 分页器下拉菜单选择呈现个数发生变化的时候，出发回调，实现一个改变一页中呈现个数的功能
 const sizeChange=()=>{
+    getHospitalInfo()
+}
+
+// 子组件的自定义事件，获取儿子给父组件传递过来的等级参数
+const getLevel=(level:string)=>{
+    // console.log(level); //获得的level是 1或2或3或4或5
+    
+    hostype.value=level
+    // 数据更新后，再次发出请求
+    getHospitalInfo()
+    
+}
+
+const getRegion=(region:string)=>{
+
+    districtCode.value=region
     getHospitalInfo()
 }
 

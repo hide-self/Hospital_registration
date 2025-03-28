@@ -1,5 +1,5 @@
 <template>
-    <el-card style="max-width: 480px" shadow="hover">
+    <el-card style="max-width: 480px" shadow="hover" @click="goDetail">
         <div class="content">
             <div class="left">
                 <div class="hospital_name">
@@ -24,9 +24,20 @@
 </template>
 
 <script setup lang="ts" name="Card">
+import { useRouter } from 'vue-router';
+
 // 接收父组件传过来的Props（即已有的医院的数据）
 defineProps(['hospitalInfo'])
 
+
+
+
+let $router=useRouter()
+// 点击医院卡片后要跳转到医院详情页面
+const goDetail=()=>{
+    // 以后跳转之后要带上医院的编码
+    $router.push({path:'/path'})
+}
 
 </script>
 
