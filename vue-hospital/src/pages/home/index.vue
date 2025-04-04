@@ -30,7 +30,7 @@
 
 
             </el-col>
-            <el-col :span="4">456</el-col>
+            <el-col :span="4"><Tip/></el-col>
         </el-row>
     </div>
 </template>
@@ -41,6 +41,7 @@ import searchBar from './searchBar/index.vue'
 import Level from './level/index.vue'
 import Region from './region/index.vue'
 import Card from './card/index.vue'
+import Tip from './tip/index.vue'
 
 import { ref, onMounted } from 'vue'
 import { reqHospital } from '@/api/home'

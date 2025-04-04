@@ -10,6 +10,7 @@ import '@/style/reset.css'
 // 2.引入全局组件
 import HospitalTop from '@/components/hospital_top/index.vue'
 import HospitalBottom from '@/components/hospital_bottom/index.vue'
+import Login from '@/components/login/index.vue'
 
 // 3.引入vue-router并安装
 import router from '@/router'
@@ -24,7 +25,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 //6.引入element-plus的国际化
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
-
+// 7.引入pinia仓库
+import pinia from '@/store'
 
 
 const app = createApp(App)
@@ -32,6 +34,7 @@ const app = createApp(App)
 // 将全局组件定义，使用app的component方法，第一个传入的是组件名，第二个传入组件变量
 app.component('HospitalTop', HospitalTop)
 app.component('HospitalBottom', HospitalBottom)
+app.component('Login',Login)
 
 // 安装vue-router
 app.use(router)
@@ -47,7 +50,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 //使用elementPlus的国际化
 app.use(ElementPlus, {
     locale: zhCn,
-  })
-  
+})
+
+
+// 安装pinia仓库
+app.use(pinia)
 
 app.mount('#app')

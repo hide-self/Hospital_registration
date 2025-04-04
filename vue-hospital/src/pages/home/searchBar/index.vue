@@ -53,7 +53,7 @@ const goDetail=(item:any)=>{
     // 此处的item就是showData这个数组中的元素对象，他们的内容如上有value和hoscode两种属性
 
     // 跳转后将来要携带参数（医院编码）
-    $router.push({path:'/hospital'})
+    $router.push({path:'/hospital/register',query:{hosCode:item.hoscode}})
 }
 
 </script>

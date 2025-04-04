@@ -13,6 +13,9 @@
         
         <!-- 底部信息 -->
         <HospitalBottom/>
+
+        <!-- 登录组件 -->
+        <Login/>
     </div>
   </el-config-provider>
 </template>

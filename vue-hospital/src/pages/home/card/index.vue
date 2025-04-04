@@ -27,16 +27,14 @@
 import { useRouter } from 'vue-router';
 
 // 接收父组件传过来的Props（即已有的医院的数据）
-defineProps(['hospitalInfo'])
-
-
+let props=defineProps(['hospitalInfo'])
 
 
 let $router=useRouter()
 // 点击医院卡片后要跳转到医院详情页面
 const goDetail=()=>{
     // 以后跳转之后要带上医院的编码
-    $router.push({path:'/path'})
+    $router.push({path:'/hospital/register',query:{hosCode:props.hospitalInfo.hoscode}})
 }
 
 </script>
