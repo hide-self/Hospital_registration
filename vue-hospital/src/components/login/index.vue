@@ -2,7 +2,7 @@
     <div class="login-container">
         <!-- v-model是控制对话框显示与否的布尔值 -->
         <!-- title是对话框左上角的标题 -->
-        <el-dialog v-model="userStore.visiable" title="用户登录" @close="scene=0">
+        <el-dialog v-model="userStore.visiable" title="用户登录" @close="closeDialog">
             <!-- 对话框身体部分结构 -->
             <div class="content">
                 <el-row>
@@ -10,23 +10,25 @@
                     <el-col :span="12">
                         <div class="login">
                             <div v-show="scene == 0">
-                                <el-form>
-                                    <el-form-item>
+                                <el-form :model="loginParam" :rules="rules" ref="form">
+                                    <el-form-item prop="phone">
                                         <el-input placeholder="请输入手机号" :prefix-icon="User"
                                             v-model="loginParam.phone"></el-input>
                                     </el-form-item>
-                                    <el-form-item>
-                                        <el-input placeholder="请输入手机验证码" :prefix-icon="Lock" v-model="loginParam.code"></el-input>
+                                    <el-form-item prop="code">
+                                        <el-input placeholder="请输入手机验证码" :prefix-icon="Lock"
+                                            v-model="loginParam.code"></el-input>
                                     </el-form-item>
                                     <el-form-item>
-                                        <el-button :disabled="!isPhone||flag" @click="getCode">
-                                            <CountDown v-if="flag" :flag="flag" @getFlag="getFlag"/>
+                                        <el-button :disabled="!isPhone || flag" @click="getCode">
+                                            <CountDown v-if="flag" :flag="flag" @getFlag="getFlag" />
                                             <span v-else>获取验证码</span>
-                                            
+
                                         </el-button>
                                     </el-form-item>
                                 </el-form>
-                                <el-button style="width: 100%;" type="primary" :disabled="!isPhone||loginParam.code.length!=6" @click="login">用户登录</el-button>
+                                <el-button style="width: 100%;" type="primary"
+                                    :disabled="!isPhone || loginParam.code.length != 6" @click="login">用户登录</el-button>
                                 <div class="bottom" @click="changeScene">
                                     <p>微信扫码登录</p>
                                     <svg t="1743399438150" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -85,7 +87,7 @@
             </div>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="userStore.visiable = false" type="primary">取消</el-button>
+                    <el-button @click="closeDialog" type="primary">取消</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -120,7 +122,7 @@ const changeScene = () => {
 // 收集表单中的手机号码用于验证码获取与填充
 let loginParam = reactive({
     phone: '',//手机
-    code:'',//手机验证码
+    code: '',//手机验证码
 })
 
 // 用计算属性计算出当前表单元素收集的手机号码是否符合手机正则表达式
@@ -132,36 +134,94 @@ let isPhone = computed(() => {
 })
 
 // 获取验证码按钮的回调
-const getCode = async() => {
+const getCode = async () => {
     // 点击获取验证码后，除了要发请求，还要开启倒计时来防抖
-    flag.value=true
+    flag.value = true
     try {
         // 验证码的获取，在Pinia仓库中存储
         await userStore.getCode(loginParam.phone)
-        loginParam.code=userStore.code
+        loginParam.code = userStore.code
     } catch (error) {
         //获取验证码失败
         ElMessage({
-            type:'error',
-            message:(error as Error).message
+            type: 'error',
+            message: (error as Error).message
         })
     }
 
 }
 
 // 定义一个响应式数据来控制倒计时数据的显示与隐藏
-let flag=ref<boolean>(false)//flag为真开启获取验证码倒计时
+let flag = ref<boolean>(false)//flag为真开启获取验证码倒计时
 
 // 计数器子组件绑定的自定义事件
 // 当倒计时为0时，flag重新变成false
-const getFlag=(val:boolean)=>{
+const getFlag = (val: boolean) => {
     // 倒计时模式结束
-    flag.value=val 
-    
+    flag.value = val
+
 }
 
+// 获取form组件实例
+let form = ref<any>()
+
+// 手机号码的自定义校验规则
+const validatorPhone = (rule: any, value: any, callBack: any) => {
+    // rule是表单校验规则对象
+    // value即为当前文本内容
+    // callBack即为回调函数。无参数传入，就是无提示；有错误对象参数传入时，会红字提示，相当于官方提供的message
+
+    // 手机号码的正则表达式
+    const reg = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/
+    if (reg.test(value)) {
+        callBack()
+    }
+    else {
+        callBack(new Error('请输入正确的手机号码格式'))
+    }
+}
+
+// 验证码的自定义校验规则
+const validatorCode = (rule: any, value: any, callBack: any) => {
+    // 验证码的正则表达式
+    const reg = /^\d{6}$/
+    if (reg.test(value)) {
+        callBack()
+    }
+    else {
+        callBack(new Error('请输入正确的验证码格式'))
+    }
+}
+
+// 表单校验规则
+const rules = {
+    /*接下来的官方提供的简单校验方式*/
+    // required代表当前字段无比进行校验
+    // message代表校验错误后的提示
+    // trigger代表表单触发时机，有两种值：change(文本变化时触发)、blur(失去焦点时触发)
+    // min与max代表最小和最大位数
+    // phone:[
+    //     {required: true, message: '手机号码务必是11位',trigger:'blur',min:11},
+    // ],
+    // code:[
+    //     {required: true, message: '手机验证码务必是6位',trigger:'change',min:6},
+    // ],
+
+    /* 接下来是官方提供的自定义校验方式 */
+    phone: [{ trigger: 'change', validator: validatorPhone }],
+    code: [{ trigger: 'change', validator: validatorCode }],
+}
+
+
+
+
+
+
 // 用户登录按钮事件
-const login=async()=>{
+const login = async () => {
+    // 登录校验
+    // await form.value.validator()
+
     // 发起登录请求
     // 发起请求成功：顶部组件需要展示用户名字、关闭dialog
     // 发起请求失败：弹出对应登陆失败信息
@@ -170,14 +230,28 @@ const login=async()=>{
         await userStore.userLogin(loginParam)
 
         // 关闭对话框
-        userStore.visiable=false
+        userStore.visiable = false
     } catch (error) {
         ElMessage({
-            type:'error',
-            message:(error as Error).message
+            type: 'error',
+            message: (error as Error).message
         })
     }
 }
+
+// 对话框关闭事件,用于清除对话框内的数据和校验提示
+const closeDialog = () => {
+    // // 法一：将对应数据一一置为初始值
+    // Object.assign(loginParam, { phone: "", code: "" })//登录表单内容
+    // scene.value = 0//切换为手机号码登录
+    // userStore.visiable = false//对话框不可见
+    // form.value.resetFields()//清除校验状态
+
+    // 法二：在App组件中的login组件加上v-if="userStore.visiable"，然后在此事件中回调将visiable置为false
+    // 用此方法本质上可以使得登录对话框不显示时自动卸载
+    userStore.visiable=false
+}
+
 
 </script>
 

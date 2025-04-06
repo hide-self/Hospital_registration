@@ -8,7 +8,7 @@ import type { LoginData, UserInfo, UserLoginResponseData } from "@/api/hospital/
 import type { UserState } from "./interface";
 
 // 引入用户信息本地存储的函数
-import { GET_TOKEN,SET_TOKEN } from "@/utils/user";
+import { GET_TOKEN,REMOVE_TOKEN,SET_TOKEN } from "@/utils/user";
 
 const useUserStore=defineStore('User',{
     state:():UserState=>{
@@ -51,7 +51,16 @@ const useUserStore=defineStore('User',{
                 return Promise.reject(new Error(result.message))
             }
             
+        },
+
+        // 用户退出登录
+        logout(){
+            // 用户信息清空
+            this.userInfo={name:'',token:''}
+            // 本地存储清空(调用了utils->user.ts中的函数，该文件中只用于操作本地存储数据)
+            REMOVE_TOKEN()
         }
+
     },
     getters:{
 
