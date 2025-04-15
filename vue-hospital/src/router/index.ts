@@ -42,12 +42,20 @@ const router = createRouter({
                     path: 'search',
                     component: () => import('@/pages/hospital/search/index.vue')
                 },
-                // {
-                //     // 子路由的重定向，默认打开后直接到register界面
-                //     path: '/hospital',
-                //     redirect: '/hospital/register'
-                // }
+                {
+                    path:'register_step1',
+                    component:()=>import('@/pages/hospital/register/register_step1.vue')
+                },
+                {
+                    path:'register_step2',
+                    component:()=>import('@/pages/hospital/register/register_step2.vue')
+                }
+
             ]
+        },
+        {
+            path:'/wxlogin',
+            component:()=>import('@/pages/wxlogin/index.vue')
         },
         {
             // 重定向，默认打开后直接到home界面

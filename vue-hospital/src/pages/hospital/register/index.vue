@@ -55,7 +55,7 @@
                         {{ department.depname }}
                     </h1>
                     <ul>
-                        <li @click="showLogin" v-for="(item) in department.children" :key="item.depcode">{{ item.depname }}</li>
+                        <li @click="showLogin(item)" v-for="(item) in department.children" :key="item.depcode">{{ item.depname }}</li>
                     </ul>
                  </div>
             </div>
@@ -70,6 +70,12 @@
 import useDetailStore from '@/store/modules/hospitalDetails';
 import { ref } from 'vue';
 import useUserStore from '@/store/modules/user';
+
+// 引入路由器用于跳转
+import { useRouter,useRoute } from 'vue-router';
+
+let $router=useRouter()
+let $route=useRoute()
 
 let hospitalStore = useDetailStore()
 
@@ -86,9 +92,17 @@ const changeIndex=(index:number)=>{
     allH1[currentIndex.value].scrollIntoView({behavior:'smooth'})
 }
 
+
 let userStore=useUserStore()
-const showLogin=()=>{
-    userStore.visiable=true
+const showLogin=(item:any)=>{
+    // 若未登录，展示登录对话框
+    // userStore.visiable=true
+
+    // 登陆后，点击医院科室，进入到相应的预约挂号详情页面register_step1.vue
+    // 跳转路由时，携带医院编号和科室编号
+    $router.push({path:'/hospital/register_step1',query:{hoscode:$route.query.hosCode,depcode:item.depcode}})
+
+
 }
 
 </script>

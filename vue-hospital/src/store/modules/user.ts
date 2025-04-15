@@ -59,6 +59,18 @@ const useUserStore=defineStore('User',{
             this.userInfo={name:'',token:''}
             // 本地存储清空(调用了utils->user.ts中的函数，该文件中只用于操作本地存储数据)
             REMOVE_TOKEN()
+        },
+
+        queryState(){
+            // 开启定时器，每隔一段时间去查看用户是否已经扫码登陆，若有，则将对话框隐藏
+            let timer=setInterval(()=>{
+                // 本地存储已经有数据了，扫码成功
+                if(GET_TOKEN()){
+                    this.visiable=false
+                    this.userInfo=JSON.parse(GET_TOKEN() as string)
+                    clearInterval(timer)
+                }
+            })
         }
 
     },

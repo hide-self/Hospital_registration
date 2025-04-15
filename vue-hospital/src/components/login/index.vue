@@ -44,7 +44,19 @@
                                 </div>
                             </div>
 
-                            <div class="webchat" v-show="scene == 1">扫码登陆结构</div>
+                            <div class="webchat" v-show="scene == 1">
+                                <!-- 在这个容器中显示微信扫码登陆 -->
+                                <div id="login_container"></div>
+                                <div class="phone" @click="handler">
+                                    <p>手机短息验证码登录</p>
+                                    <svg t="1744036714548" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                        xmlns="http://www.w3.org/2000/svg" p-id="2769" width="16" height="16">
+                                        <path
+                                            d="M820.409449 797.228346q0 25.19685-10.07874 46.866142t-27.716535 38.299213-41.322835 26.204724-50.897638 9.574803l-357.795276 0q-27.212598 0-50.897638-9.574803t-41.322835-26.204724-27.716535-38.299213-10.07874-46.866142l0-675.275591q0-25.19685 10.07874-47.370079t27.716535-38.80315 41.322835-26.204724 50.897638-9.574803l357.795276 0q27.212598 0 50.897638 9.574803t41.322835 26.204724 27.716535 38.80315 10.07874 47.370079l0 675.275591zM738.771654 170.330709l-455.559055 0 0 577.511811 455.559055 0 0-577.511811zM510.992126 776.062992q-21.165354 0-36.787402 15.11811t-15.622047 37.291339q0 21.165354 15.622047 36.787402t36.787402 15.622047q22.173228 0 37.291339-15.622047t15.11811-36.787402q0-22.173228-15.11811-37.291339t-37.291339-15.11811zM591.622047 84.661417q0-8.062992-5.03937-12.598425t-11.086614-4.535433l-128 0q-5.03937 0-10.582677 4.535433t-5.543307 12.598425 5.03937 12.598425 11.086614 4.535433l128 0q6.047244 0 11.086614-4.535433t5.03937-12.598425z"
+                                            p-id="2770"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </el-col>
 
@@ -95,7 +107,7 @@
 </template>
 
 <script setup lang="ts" name="Login">
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed,watch } from 'vue';
 
 // 引入字体图标
 import { User, Lock } from '@element-plus/icons-vue';
@@ -110,12 +122,42 @@ import { ElMessage } from 'element-plus';
 // 获取user的仓库数据(visialbe，用于控制对话框的显示与隐藏)
 let userStore = useUserStore()
 
+// 引入微信扫码登录参数请求
+import { reqWxLogin } from '@/api/hospital';
+import type { WXLoginResponseData } from '@/api/hospital/type';
+
 
 let scene = ref<number>(0);//0代表手机号码登陆，1代表微信扫码登录
 
 // 点击“微信扫码登陆|微信小图标”切换为微信扫码登录
-const changeScene = () => {
+
+const changeScene = async () => {
     scene.value = 1
+
+    // 发请求获取微信扫码二维码需要的参数
+    // 需要携带一个参数：登陆成功后重定向的页面位置，通常是是服务器域名，此处就是本地http://localhost:5173
+    let redirect_URL = encodeURIComponent(window.location.origin)
+    // console.log(redirect_URL)//输出结果为http://localhost:5173
+    let result: WXLoginResponseData = await reqWxLogin(redirect_URL)
+
+
+    // 生成微信扫码登录的二维码页面
+    // 官方文档：https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
+    //@ts-ignore
+    var obj = new WxLogin({
+        self_redirect: true,//true：手机点击确认登录后可以在 iframe 内跳转到 redirect_uri，false：手机点击确认登录后可以在 top window 跳转到 redirect_uri。默认为 false。
+        id: "login_container",//显示二维码标签的id设置
+        appid: result.data.appid,//提交审核后才可以有（300元）
+        scope: "snsapi_login",//参数值固定，表示当前页面已授权
+        redirect_uri: result.data.redirectUri,//重定向地址，审核时填写的授权回调域
+        state: result.data.state,//state就是服务器重定向地址(携带用户信息)
+        style: "black",//二维码外观，只有black和white两种值
+        href: "",//css样式链接
+        //@ts-ignore
+        onReady: function (isReady) {
+            console.log(isReady);
+        }
+    });
 }
 
 
@@ -249,9 +291,20 @@ const closeDialog = () => {
 
     // 法二：在App组件中的login组件加上v-if="userStore.visiable"，然后在此事件中回调将visiable置为false
     // 用此方法本质上可以使得登录对话框不显示时自动卸载
-    userStore.visiable=false
+    userStore.visiable = false
 }
 
+// 点击手机验证码盒子，切换成手机验证码登录模式
+const handler=()=>{
+    scene.value=0
+}
+
+// 监听场景数值
+watch(()=>scene.value,(val:number)=>{
+    if(val==1){
+        userStore.queryState()
+    }
+})
 
 </script>
 
@@ -265,6 +318,23 @@ const closeDialog = () => {
     .login {
         padding: 20px;
         border: 1px solid #ccc;
+
+        .webchat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .phone {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+                p{
+                    margin: 10px 0;
+                    
+                }
+            }
+        }
     }
 
     .bottom {

@@ -6,6 +6,10 @@
 //目的3：响应拦截器，可以简化服务器返回的数据，处理http网络错误
 
 import axios from "axios";
+
+// 引入用户相关的仓库
+import useUserStore from "@/store/modules/user";
+
 import { ElMessage } from "element-plus";
 
 //利用axios.create方法来创建一个axios实例：可以设置基础路径、超时的时间的设置
@@ -17,6 +21,14 @@ const request=axios.create({
 
 // 请求拦截器
 request.interceptors.request.use((config)=>{
+    // 获取用户仓库
+    let userStore=useUserStore()
+    
+    // token是公共参数，如果用户登录了，需要携带
+    if(userStore.userInfo.token){
+        config.headers.token=userStore.userInfo.token
+    }
+
     // config：请求拦截器回调注入的对象，配置对象身上最终要的一件事情headers属性
     // 可以通过请求头携带公共参数 - token
     return config
