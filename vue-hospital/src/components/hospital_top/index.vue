@@ -20,9 +20,9 @@
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item>实名认证</el-dropdown-item>
-                            <el-dropdown-item>挂号订单</el-dropdown-item>
-                            <el-dropdown-item>就诊人管理</el-dropdown-item>
+                            <el-dropdown-item @click="goUser('/user/certification')">实名认证</el-dropdown-item>
+                            <el-dropdown-item @click="goUser('/user/order')">挂号订单</el-dropdown-item>
+                            <el-dropdown-item @click="goUser('/user/patient')">就诊人管理</el-dropdown-item>
                             <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -55,6 +55,11 @@ const logout=()=>{
     userStore.logout()
     // 退出后跳转至首页(编程式路由导航)
     $router.push({path:'/home'})
+}
+
+const goUser=(path:string)=>{
+    // key与value变量名一致时，省略value变量名
+    $router.push({path})
 }
 
 </script>

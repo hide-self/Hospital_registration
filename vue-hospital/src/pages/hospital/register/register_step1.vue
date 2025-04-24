@@ -86,7 +86,7 @@
                         </svg>
                         <span class="text">下午号源</span>
                     </div>
-                    <!-- 上午号源中每个医生的信息 -->
+                    <!-- 下午号源中每个医生的信息 -->
                     <div class="doc_info" v-for="doctor in afternoonArr" :key="doctor.id">
                         <!-- 左侧展示医生名字+技能 -->
                         <div class="left">

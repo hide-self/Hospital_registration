@@ -169,7 +169,7 @@ export interface User {
         "provinceString": null
     },
     "userId": number,
-    "name": number,
+    "name": string,
     "certificatesType": string,
     "certificatesNo": string,
     "sex": number,
@@ -196,7 +196,6 @@ export interface UserResponseData extends ResponseData {
 
 
 //获取某一个挂号医生数据详情
-
 export interface DoctorInfoData extends ResponseData{
     data:Doctor
 }

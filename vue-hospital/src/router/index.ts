@@ -58,6 +58,32 @@ const router = createRouter({
             component:()=>import('@/pages/wxlogin/index.vue')
         },
         {
+            path:'/user',
+            component:()=>import('@/pages/user/index.vue'),
+            children:[
+                {
+                    path:'certification',
+                    component:()=>import('@/pages/user/certification/index.vue')
+                },
+                {
+                    path:'order',
+                    component:()=>import('@/pages/user/order/index.vue')
+                },
+                {
+                    path:'patient',
+                    component:()=>import('@/pages/user/patient/index.vue')
+                },
+                {
+                    path:'profile',
+                    component:()=>import('@/pages/user/profile/index.vue')
+                },
+                {
+                    path:'feedback',
+                    component:()=>import('@/pages/user/feedback/index.vue')
+                },
+            ]
+        },
+        {
             // 重定向，默认打开后直接到home界面
             path: '/',
             redirect: '/home'
