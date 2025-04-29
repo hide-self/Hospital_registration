@@ -8,7 +8,7 @@
             <template #header>
                 <div class="card-header">
                     <span>请选择就诊人</span>
-                    <el-button type="primary" size="default" @click="" :icon="User">添加就诊人信息</el-button>
+                    <el-button @click="goUser" type="primary" size="default" :icon="User">添加就诊人信息</el-button>
                 </div>
             </template>
 
@@ -106,8 +106,6 @@
 // 引入用户图标
 import { User } from '@element-plus/icons-vue';
 
-// 就诊人组件
-import Visitor from './visitor.vue';
 
 // 引入获取就诊人信息的接口
 import { reqDoctorInfo, reqGetUser } from '@/api/hospital';
@@ -196,6 +194,10 @@ const submitOrder = async () => {
 
 }
 
+// 添加就诊人：直接跳转到会员中心->就诊人管理（设置scene=1,进入表单）
+const goUser=()=>{
+    $router.push({path:'/user/patient',query:{type:'add'}})//跳转时，自带路由，便于设置scene为1，也便于修改后跳转回来
+}
 
 </script>
 

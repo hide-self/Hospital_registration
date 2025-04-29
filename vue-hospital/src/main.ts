@@ -11,6 +11,7 @@ import '@/style/reset.css'
 import HospitalTop from '@/components/hospital_top/index.vue'
 import HospitalBottom from '@/components/hospital_bottom/index.vue'
 import Login from '@/components/login/index.vue'
+import Visitor from '@/components/visitor/visitor.vue'
 
 // 3.引入vue-router并安装
 import router from '@/router'
@@ -32,12 +33,16 @@ import pinia from '@/store'
 const app = createApp(App)
 
 // 将全局组件定义，使用app的component方法，第一个传入的是组件名，第二个传入组件变量
+// 注册全局组件后，就不用引入了
 app.component('HospitalTop', HospitalTop)
 app.component('HospitalBottom', HospitalBottom)
 app.component('Login',Login)
+app.component('Visitor',Visitor)
 
 // 安装vue-router
 app.use(router)
+// 引入路由鉴权，引入之后就可以直接生效了，不用安装什么别的东西
+import './permission'
 
 // 安装element-plus组件库
 app.use(ElementPlus)

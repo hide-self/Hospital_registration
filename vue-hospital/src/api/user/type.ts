@@ -232,7 +232,5 @@ export interface AddOrUpdateUser {
     contactsCertificatesType:string,
     contactsCertificatesNo:string,
     contactsPhone:string
-
-
 }
 

@@ -2,7 +2,7 @@
 import request from "@/utils/request";
 
 // 引入ts
-import type { AllOrderStateResponseData,AllUserResponseData,UserOrderInfoResponseData,OrderResponseData, SubmitOrder,QrCode,PayReslt, UseringoResponseData,CertationTypeResponseData,UserParams } from "./type";
+import type { AddOrUpdateUser,AllOrderStateResponseData,AllUserResponseData,UserOrderInfoResponseData,OrderResponseData, SubmitOrder,QrCode,PayReslt, UseringoResponseData,CertationTypeResponseData,UserParams } from "./type";
 
 // 枚举地址
 enum API {
@@ -38,7 +38,15 @@ enum API {
     //获取订单的状态
     ORDERSTATE_URL = '/order/orderInfo/auth/getStatusList',
 
+    // 获取城市的数据
+    CITY_URL = '/cmn/dict/findByParentId/',
 
+    //新增就诊人接口
+    ADDUSER_URL = '/user/patient/auth/save',
+    //更新已有的就诊人接口
+    UPDATEUSER_URL = '/user/patient/auth/update',
+    //删除已有的就诊人
+    DELETEUSER_URL='/user/patient/auth/remove/'
 }
 
 // 提交订单(提交医院ID、医生ID、就诊人ID)
@@ -72,3 +80,22 @@ export const reqUserOrderInfo = (page: number, limit: number, patientId: string,
 export const reqAllUser = () => request.get<any, AllUserResponseData>(API.ALLUSER_URL);
 //获取全部订单的接口
 export const reqOrderState = () => request.get<any, AllOrderStateResponseData>(API.ORDERSTATE_URL);
+
+//获取城市的数据
+export const reqCity = (parentId: string) => request.get<any, any>(API.CITY_URL + parentId);
+
+
+//新增与修改已有的就诊人接口方法
+// 这个请求题，需要携带一个就诊人信息对象，这个不同于以往
+// 这个就诊人信息对象通过”会员中心->就诊人管理“的表单进行一一获取
+export const reqAddOrUpdateUser = (data: AddOrUpdateUser) => {
+    if (data.id) {//存在id时，就是修改
+        return request.put<any, any>(API.UPDATEUSER_URL, data);
+    } else {//不存在id时，就是添加
+        return request.post<any, any>(API.ADDUSER_URL, data);
+    }
+}
+
+//删除某一个就诊人的信息
+export const reqRemoveUser = (id:number)=>request.delete<any,any>(API.DELETEUSER_URL+id)
+
