@@ -126,6 +126,13 @@ let userStore = useUserStore()
 import { reqWxLogin } from '@/api/hospital';
 import type { WXLoginResponseData } from '@/api/hospital/type';
 
+//引入路由和路由器，便于在登陆后，重新回到待访问页面
+import { useRoute,useRouter } from 'vue-router';
+
+// 获取路由和路由器
+let $route=useRoute()
+let $router=useRouter()
+
 
 let scene = ref<number>(0);//0代表手机号码登陆，1代表微信扫码登录
 
@@ -273,6 +280,16 @@ const login = async () => {
 
         // 关闭对话框
         userStore.visiable = false
+
+        // 获取url上的query参数，并在登陆后，跳转到原本想要访问的页面
+        let redirect=$route.query.redirect
+        if(redirect){
+            $router.push(redirect as string)
+        }
+        else{
+            $router.push('/home')
+        }
+
     } catch (error) {
         ElMessage({
             type: 'error',
